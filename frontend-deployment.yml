@@ -1,0 +1,36 @@
+# frontend-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mern-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mern-frontend
+  template:
+    metadata:
+      labels:
+        app: mern-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-docker-registry/mern-frontend:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: REACT_APP_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mern-config
+              key: REACT_APP_API_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mern-frontend
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: mern-frontend

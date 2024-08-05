@@ -1,0 +1,36 @@
+# backend-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mern-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mern-backend
+  template:
+    metadata:
+      labels:
+        app: mern-backend
+    spec:
+      containers:
+      - name: backend
+        image: your-docker-registry/mern-backend:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              name: mern-config
+              key: MONGODB_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mern-backend
+spec:
+  ports:
+  - port: 5000
+  selector:
+    app: mern-backend
